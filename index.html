@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>แบบทดสอบแนวคิดเชิงคำนวณ</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:#24245f;
+  font-family:"Noto Sans Thai","Tahoma","Arial",sans-serif;
+  background:
+    radial-gradient(circle at 10% 15%,#ffffffaa 0 55px,transparent 56px),
+    radial-gradient(circle at 90% 30%,#ffffff88 0 75px,transparent 76px),
+    linear-gradient(135deg,#dff4ff 0%,#e9e4ff 48%,#f3e5ff 100%);
+  overflow-x:hidden;
+}
+body:before,body:after{
+  content:"";position:fixed;border-radius:50%;filter:blur(2px);opacity:.55;z-index:0;pointer-events:none
+}
+body:before{width:260px;height:260px;background:#b9d9ff;left:-90px;top:20%}
+body:after{width:300px;height:300px;background:#d8bfff;right:-100px;bottom:8%}
+.cat-bg{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.cat{position:absolute;max-width:260px;filter:drop-shadow(0 10px 12px #5540a322);opacity:.92}
+.cat-top{width:245px;right:3%;top:-8px}
+.cat-right{width:185px;right:-18px;top:43%}
+.cat-left{width:190px;left:-25px;bottom:-12px}
+.cat-bottom{width:175px;right:2%;bottom:-18px}
+.wrap{position:relative;z-index:2;max-width:900px;margin:35px auto;padding:18px}
+.card{
+  background:#ffffffee;border:2px solid #ffffff;border-radius:28px;
+  padding:30px;box-shadow:0 18px 55px #6253b326;backdrop-filter:blur(8px)
+}
+h1{margin:0 0 8px;color:#563bc5;font-size:clamp(27px,5vw,40px)}
+h1:before{content:"🐾 ";font-size:.75em}
+.card>p{color:#65659a}
+.info{
+  display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:22px 0 28px;
+  padding:18px;background:linear-gradient(135deg,#edf8ff,#f0eaff);
+  border-radius:20px;border:1px solid #d9d5ff
+}
+input[type=text],input:not([type]){
+  width:100%;padding:13px 14px;border:2px solid #cdd8ff;border-radius:13px;
+  font-size:16px;background:white;outline:none
+}
+input:focus{border-color:#7957df;box-shadow:0 0 0 4px #7957df18}
+button{
+  border:0;border-radius:14px;padding:13px 22px;font-size:16px;font-weight:700;
+  color:white;background:linear-gradient(135deg,#4f7dff,#7650d8);
+  box-shadow:0 7px 18px #5d54d633;cursor:pointer;transition:.2s
+}
+button:hover{transform:translateY(-1px);filter:brightness(1.03)}
+.q{padding:22px 0;border-top:1px solid #e8e5f7}
+.q b{display:block;font-size:18px;line-height:1.6;color:#29256c}
+.opt{
+  display:block;padding:13px 15px;margin:9px 0;background:#fafaff;
+  border:2px solid #e8e6f7;border-radius:13px;cursor:pointer;transition:.15s
+}
+.opt:hover{background:#f0edff;border-color:#bdaaf5}
+.opt input{accent-color:#6d52d8;margin-right:8px}
+#result{
+  display:none;text-align:center;font-size:25px;font-weight:800;color:#573bc3;
+  margin-top:22px;padding:18px;border-radius:18px;background:#eeeaff
+}
+#teacherPanel{
+  display:none;margin-top:25px;padding:22px;border-top:2px dashed #cfc8f3;
+  background:#f7f5ff;border-radius:18px
+}
+#teacherPanel h2{color:#563bc5}
+#scoreList table{background:white;border-radius:12px;overflow:hidden}
+#scoreList th{background:#e9e3ff}
+#scoreList th,#scoreList td{padding:9px;border-bottom:1px solid #eee;text-align:left}
+@media(max-width:700px){
+  .wrap{margin:12px auto;padding:10px}.card{padding:20px;border-radius:22px}
+  .info{grid-template-columns:1fr}.cat{opacity:.38}.cat-top{width:170px}.cat-right{width:120px}.cat-left,.cat-bottom{width:120px}
+  .q b{font-size:16px}
+}
+</style></head><body>
+<div class="cat-bg">
+  <img class="cat cat-top" src="assets/cat_top.png" alt="">
+  <img class="cat cat-right" src="assets/cat_right.png" alt="">
+  <img class="cat cat-left" src="assets/cat_left.png" alt="">
+  <img class="cat cat-bottom" src="assets/cat_bottom.png" alt="">
+</div>
+<div class="wrap"><div class="card">
+<h1>แบบทดสอบแนวคิดเชิงคำนวณ</h1><p>ชั้นมัธยมศึกษาปีที่ 2 | จำนวน 15 ข้อ</p><p style="font-size:13px;color:#777">Pre-test/Post-test • คะแนนนักเรียนแสดงเฉพาะหลังส่ง • โหมดดาวน์โหลดสำหรับครู</p>
+<button type="button" onclick="teacherLogin()" style="background:#555;padding:9px 16px;font-size:14px">เข้าสู่โหมดครู</button>
+<div style="margin:0 0 18px;padding:14px 16px;background:#f0edff;border-radius:14px">
+<label><b>ประเภทการทดสอบ</b></label>
+<select id="testType" style="width:100%;margin-top:8px;padding:12px;border:2px solid #cdd8ff;border-radius:12px;font-size:16px">
+<option value="Pre-test">แบบทดสอบก่อนเรียน</option>
+<option value="Post-test">แบบทดสอบหลังเรียน</option>
+</select>
+</div><div class="info"><input id="name" placeholder="ชื่อ-นามสกุล" required><input id="room" placeholder="ห้อง"><input id="no" placeholder="เลขที่"></div>
+<form id="quiz"></form><button onclick="submitQuiz()" type="button">ส่งคำตอบ</button><div id="result"></div>
+<div id="teacherPanel" style="display:none;margin-top:25px;padding-top:20px;border-top:1px solid #eee">
+<h2>สำหรับครู</h2>
+<p>ดูคะแนนทั้งหมดและดาวน์โหลดเป็นไฟล์ Excel-compatible (.csv)</p>
+<button type="button" onclick="downloadScores()">ดาวน์โหลดคะแนน Excel</button>
+<button type="button" onclick="clearScores()" style="background:#777;margin-left:8px">ล้างคะแนน</button>
+</div>
+</div></div>
+<script>
+const qs=[
+["แนวคิดเชิงคำนวณหมายถึงข้อใด","การคิดแก้ปัญหาอย่างเป็นระบบและมีขั้นตอน","การคำนวณตัวเลขด้วยเครื่องคิดเลข","การเขียนโปรแกรมเท่านั้น","การจดจำข้อมูลจำนวนมาก"],
+["แนวคิดเชิงคำนวณมีองค์ประกอบสำคัญกี่องค์ประกอบ","4 องค์ประกอบ","2 องค์ประกอบ","3 องค์ประกอบ","5 องค์ประกอบ"],
+["แบ่งงานวันเกิดเป็น เชิญเพื่อน ซื้อของ เตรียมของขวัญ และตกแต่ง เป็นแนวคิดใด","การแยกส่วนประกอบและย่อยปัญหา","การคิดหารูปแบบ","การคิดเชิงนามธรรม","การออกแบบขั้นตอนวิธี"],
+["การแบ่งปัญหาใหญ่เป็นปัญหาย่อยช่วยอย่างไร","ทำให้แก้ปัญหาได้ง่ายขึ้น","ทำให้ปัญหาซับซ้อนขึ้น","ไม่ต้องวางแผน","ไม่ต้องตรวจสอบ"],
+["แบ่งการทำรายงานเป็น ค้นหาข้อมูล แบ่งหน้าที่ ทำสไลด์ ซ้อมนำเสนอ คือ","Decomposition","Pattern Recognition","Abstraction","Algorithm"],
+["พบว่าการทำงานกลุ่มหลายวิชามีรูปแบบ แบ่งหัวข้อ → แบ่งหน้าที่ → สรุป → ตรวจงาน คือ","Pattern Recognition","Decomposition","Abstraction","Algorithm"],
+["Pattern Recognition คืออะไร","ค้นหาความเหมือนหรือรูปแบบที่เกิดซ้ำ","ตัดข้อมูลที่ไม่จำเป็น","แบ่งปัญหา","กำหนดลำดับขั้นตอน"],
+["อ่านหนังสือสอบด้วยวิธี อ่าน → สรุป → ทำโจทย์ → ทบทวน เป็นการใช้แนวคิดใด","Pattern Recognition","Decomposition","Abstraction","Algorithm"],
+["เลือกซื้อมือถือโดยดูเฉพาะงบประมาณ ความจุ และกล้อง เป็นแนวคิดใด","Abstraction","Decomposition","Pattern Recognition","Algorithm"],
+["ลักษณะสำคัญของ Abstraction คืออะไร","มองสิ่งสำคัญและตัดสิ่งไม่จำเป็นออก","แบ่งปัญหาใหญ่","ค้นหารูปแบบ","เรียงคำสั่ง"],
+["โปรแกรมคำนวณเกรดสนใจเฉพาะคะแนน ไม่สนใจสีเสื้อหรือส่วนสูง สอดคล้องกับ","Abstraction","Decomposition","Pattern Recognition","Algorithm"],
+["ข้อใดเป็นตัวอย่าง Algorithm","ต้มน้ำ → ใส่เส้น → ใส่เครื่องปรุง → รับประทาน","สังเกตความเหมือน","ตัดข้อมูลที่ไม่เกี่ยวข้อง","แบ่งงานใหญ่เป็นงานย่อย"],
+["เหตุใด Algorithm ต้องเรียงลำดับชัดเจน","เพื่อให้ทำงานได้ถูกต้องตามลำดับ","เพื่อให้ข้อมูลมากขึ้น","เพื่อให้ซับซ้อนขึ้น","เพื่อไม่ต้องตรวจสอบ"],
+["วิเคราะห์โจทย์ → ออกแบบขั้นตอน → เขียนโค้ด → ทดสอบ → แก้ไข เป็น","Algorithm Design","Decomposition","Pattern Recognition","Abstraction"],
+["ประโยชน์ของแนวคิดเชิงคำนวณคือข้อใด","ช่วยมองปัญหา วางแผน และตัดสินใจอย่างมีเหตุผล","ใช้เฉพาะเขียนโปรแกรม","ใช้เฉพาะคณิตศาสตร์","ช่วยจำข้อมูลได้มากขึ้น"]
+];
+const form=document.getElementById("quiz");
+qs.forEach((q,i)=>{let d=document.createElement("div");d.className="q";d.innerHTML=`<b>${i+1}. ${q[0]}</b>`+q.slice(1).map((x,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${"กขคง"[j]}. ${x}</label>`).join("");form.appendChild(d)});
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzycS3P72OEUlCEAPZhBsx2dcEDgdW2Hfcj1LP8e2v_xHCxQUYdEyjTZgarlPOdp63F4A/exec";
+
+async function sendScoreToGoogleSheets(record){
+  try{
+    await fetch(GOOGLE_SHEETS_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(record)
+    });
+    return true;
+  }catch(error){ console.error(error); return false; }
+}
+
+async function submitQuiz(){
+let score=0,ok=true;
+qs.forEach((q,i)=>{
+ let a=document.querySelector(`input[name=q${i}]:checked`);
+ if(!a) ok=false; else if(+a.value===0) score++;
+});
+if(!ok){alert("กรุณาตอบให้ครบทั้ง 15 ข้อ");return}
+let n=document.getElementById("name").value.trim();
+if(!n){alert("กรุณากรอกชื่อ-นามสกุล");return}
+let record={
+ name:n,
+ room:document.getElementById("room").value.trim(),
+ no:document.getElementById("no").value.trim(),
+ score:score,
+ total:15,
+ type:document.getElementById("testType").value,
+ date:new Date().toLocaleString("th-TH")
+};
+let data=JSON.parse(localStorage.getItem("ct_scores")||"[]");
+data.push(record); localStorage.setItem("ct_scores",JSON.stringify(data));
+document.getElementById("result").style.display="block";
+document.getElementById("result").innerHTML=`กำลังบันทึกคะแนน...`;
+const sent=await sendScoreToGoogleSheets(record);
+document.getElementById("result").innerHTML=sent
+ ? `ได้ ${score} / 15 คะแนน<br><small>ส่งคะแนนเรียบร้อยแล้ว</small>`
+ : `ได้ ${score} / 15 คะแนน<br><small>ไม่สามารถส่งคะแนนได้ กรุณาแจ้งครู</small>`;
+window.scrollTo(0,document.body.scrollHeight);
+}
+
+function teacherLogin(){
+let pw=prompt("รหัสผ่านครู");
+if(pw==="1234"){
+ document.getElementById("teacherPanel").style.display="block";
+ showScores();
+}else alert("รหัสผ่านไม่ถูกต้อง");
+}
+function showScores(){
+let data=JSON.parse(localStorage.getItem("ct_scores")||"[]");
+let panel=document.getElementById("teacherPanel");
+let old=document.getElementById("scoreList"); if(old) old.remove();
+let div=document.createElement("div"); div.id="scoreList";
+div.innerHTML=`<p><b>จำนวนรายการคะแนน: ${data.length}</b></p>`+
+(data.length?`<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><th>ชื่อ</th><th>ห้อง</th><th>เลขที่</th><th>คะแนน</th><th>ประเภท</th><th>วันเวลา</th></tr>`+
+data.map(x=>`<tr><td>${x.name}</td><td>${x.room}</td><td>${x.no}</td><td>${x.score}/${x.total}</td><td>${x.type}</td><td>${x.date}</td></tr>`).join("")+
+`</table></div>`:"<p>ยังไม่มีคะแนน</p>");
+panel.appendChild(div);
+}
+function downloadScores(){
+let data=JSON.parse(localStorage.getItem("ct_scores")||"[]");
+if(!data.length){alert("ยังไม่มีคะแนนให้ดาวน์โหลด");return}
+let rows=[["ชื่อ-นามสกุล","ห้อง","เลขที่","คะแนน","คะแนนเต็ม","ประเภท","วันที่/เวลา"]];
+data.forEach(x=>rows.push([x.name,x.room,x.no,x.score,x.total,x.type,x.date]));
+let csv="\uFEFF"+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+let blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+let a=document.createElement("a");a.href=URL.createObjectURL(blob);
+a.download="คะแนนแนวคิดเชิงคำนวณ.csv";a.click();URL.revokeObjectURL(a.href);
+}
+function clearScores(){
+if(confirm("ต้องการล้างคะแนนทั้งหมดในเครื่องนี้ใช่หรือไม่?")){
+ localStorage.removeItem("ct_scores"); showScores();
+}
+}
+</script></body></html>
