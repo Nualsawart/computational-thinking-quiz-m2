@@ -90,7 +90,8 @@ button:hover{transform:translateY(-1px);filter:brightness(1.03)}
 <option value="Pre-test">แบบทดสอบก่อนเรียน</option>
 <option value="Post-test">แบบทดสอบหลังเรียน</option>
 </select>
-</div><div class="info"><input id="name" placeholder="ชื่อ-นามสกุล" required><input id="room" placeholder="ห้อง"><input id="no" placeholder="เลขที่"></div>
+</div>
+<div class="info"><input id="name" placeholder="ชื่อ-นามสกุล" required><input id="room" placeholder="ห้อง"><input id="no" placeholder="เลขที่"></div>
 <form id="quiz"></form><button onclick="submitQuiz()" type="button">ส่งคำตอบ</button><div id="result"></div>
 <div id="teacherPanel" style="display:none;margin-top:25px;padding-top:20px;border-top:1px solid #eee">
 <h2>สำหรับครู</h2>
@@ -122,15 +123,18 @@ qs.forEach((q,i)=>{let d=document.createElement("div");d.className="q";d.innerHT
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzycS3P72OEUlCEAPZhBsx2dcEDgdW2Hfcj1LP8e2v_xHCxQUYdEyjTZgarlPOdp63F4A/exec";
 
 async function sendScoreToGoogleSheets(record){
-  try{
-    await fetch(GOOGLE_SHEETS_URL,{
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(record)
+  try {
+    await fetch(GOOGLE_SHEETS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(record)
     });
     return true;
-  }catch(error){ console.error(error); return false; }
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
 
 async function submitQuiz(){
@@ -154,11 +158,7 @@ let record={
 let data=JSON.parse(localStorage.getItem("ct_scores")||"[]");
 data.push(record); localStorage.setItem("ct_scores",JSON.stringify(data));
 document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML=`กำลังบันทึกคะแนน...`;
-const sent=await sendScoreToGoogleSheets(record);
-document.getElementById("result").innerHTML=sent
- ? `ได้ ${score} / 15 คะแนน<br><small>ส่งคะแนนเรียบร้อยแล้ว</small>`
- : `ได้ ${score} / 15 คะแนน<br><small>ไม่สามารถส่งคะแนนได้ กรุณาแจ้งครู</small>`;
+document.getElementById("result").innerHTML=`ได้ ${score} / 15 คะแนน`;
 window.scrollTo(0,document.body.scrollHeight);
 }
 
