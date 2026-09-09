@@ -118,8 +118,29 @@ const qs=[
 ["วิเคราะห์โจทย์ → ออกแบบขั้นตอน → เขียนโค้ด → ทดสอบ → แก้ไข เป็น","Algorithm Design","Decomposition","Pattern Recognition","Abstraction"],
 ["ประโยชน์ของแนวคิดเชิงคำนวณคือข้อใด","ช่วยมองปัญหา วางแผน และตัดสินใจอย่างมีเหตุผล","ใช้เฉพาะเขียนโปรแกรม","ใช้เฉพาะคณิตศาสตร์","ช่วยจำข้อมูลได้มากขึ้น"]
 ];
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// สุ่มลำดับข้อ และสุ่มตัวเลือก โดยทำเครื่องหมายคำตอบที่ถูกต้องไว้ก่อนสุ่ม
+const randomizedQs=shuffle(qs).map(q=>{
+  const choices=q.slice(1).map((text,index)=>({text,correct:index===0}));
+  return {question:q[0],choices:shuffle(choices)};
+});
+
 const form=document.getElementById("quiz");
-qs.forEach((q,i)=>{let d=document.createElement("div");d.className="q";d.innerHTML=`<b>${i+1}. ${q[0]}</b>`+q.slice(1).map((x,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${"กขคง"[j]}. ${x}</label>`).join("");form.appendChild(d)});
+randomizedQs.forEach((q,i)=>{
+  let d=document.createElement("div");
+  d.className="q";
+  d.innerHTML=`<b>${i+1}. ${q.question}</b>`+
+    q.choices.map((c,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${"กขคง"[j]}. ${c.text}</label>`).join("");
+  form.appendChild(d);
+});
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzycS3P72OEUlCEAPZhBsx2dcEDgdW2Hfcj1LP8e2v_xHCxQUYdEyjTZgarlPOdp63F4A/exec";
 
 async function sendScoreToGoogleSheets(record){
@@ -139,9 +160,10 @@ async function sendScoreToGoogleSheets(record){
 
 async function submitQuiz(){
 let score=0,ok=true;
-qs.forEach((q,i)=>{
+randomizedQs.forEach((q,i)=>{
  let a=document.querySelector(`input[name=q${i}]:checked`);
- if(!a) ok=false; else if(+a.value===0) score++;
+ if(!a) ok=false;
+ else if(q.choices[Number(a.value)].correct) score++;
 });
 if(!ok){alert("กรุณาตอบให้ครบทั้ง 15 ข้อ");return}
 let n=document.getElementById("name").value.trim();
@@ -158,7 +180,11 @@ let record={
 let data=JSON.parse(localStorage.getItem("ct_scores")||"[]");
 data.push(record); localStorage.setItem("ct_scores",JSON.stringify(data));
 document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML=`ได้ ${score} / 15 คะแนน`;
+document.getElementById("result").innerHTML=`กำลังบันทึกคะแนน...`;
+const sent=await sendScoreToGoogleSheets(record);
+document.getElementById("result").innerHTML=sent
+  ? `ได้ ${score} / 15 คะแนน<br><small>ส่งคะแนนเรียบร้อยแล้ว</small>`
+  : `ได้ ${score} / 15 คะแนน<br><small>ไม่สามารถส่งคะแนนได้ กรุณาแจ้งครู</small>`;
 window.scrollTo(0,document.body.scrollHeight);
 }
 
